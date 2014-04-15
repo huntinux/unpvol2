@@ -1,0 +1,6 @@
+IPC:
+1. message passing (pipes, FIFOs, message queues)
+2. synchronization (mutexes, condition variables, read-write locks, file and record locks, and semaphores)
+3. shared memory (anonymousand named)
+4. remote procedure calls
+*socket
