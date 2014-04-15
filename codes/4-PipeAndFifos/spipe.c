@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <stdio.h>
 
@@ -31,13 +32,18 @@ int main(int argc, char *argv[])
     if(p < 0){
         perror("fork error");
         exit(-1);
+
     }else if(p > 0){ // client 
         close(p1[0]);
         close(p2[1]);
 
         char buf[512];
         int rnum;
-        rnum = read(0, buf, 512);
+
+        if((rnum = read(0, buf, 512)) == 0){
+            write(2, "reach EOF\n", 10);
+            exit(-1);
+        }
         write(p1[1], buf, rnum);
 
         while((rnum = read(p2[0], buf, 512)) > 0){
@@ -65,6 +71,7 @@ int main(int argc, char *argv[])
             close(fd);
         }
 
+        waitpid(p, NULL, 0);
     }     
 
     return 0;
