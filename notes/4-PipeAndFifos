@@ -1,0 +1,20 @@
+Pipe:
+the original form of Unix IPC;
+their fundamental limitation is that they have no name, and 
+can therefore be used only by related processes.
+
+Fifo: named pipe
+
+Both pipes and FIFOs are accessed using the normal read and write functions
+
+Pipes
+    #include <unistd.h>
+    int pipe (int fd[2]);
+    Two file descriptors are returned: fd[0], which is open for reading, and fd[1], which is
+    open for writing
+
+The S_ISFIFO macro can be used to determine if a descriptor or file is either a pipe
+or a FIFO. Its single argument is the st_mode member of the stat structure and the
+macro evaluates to true (nonzero)or false (0). For a pipe, this structure is filled in by the
+fstat function. For a FIFO, this structure is filled in by the fstat , lstat , or stat
+functions.
