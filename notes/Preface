@@ -3,4 +3,4 @@ IPC:
 2. synchronization (mutexes, condition variables, read-write locks, file and record locks, and semaphores)
 3. shared memory (anonymousand named)
 4. remote procedure calls
-*socket
+*socket : in unp vol1

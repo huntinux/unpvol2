@@ -1,0 +1,13 @@
+
+The three types of IPC,
+    Posix message queues (Chapter 5),
+    Posix semaphores (Chapter 10), and
+    Posix shared memory (Chapter 13)
+
+IPC Names
+we noted that the three types of Posix IPC use "Posix IPC names" for their
+identification. The first argument to the three functions mq_open, sem_open, and
+shm_open is such a name, which may or may not be a real pathname in a filesystem.
+
+IPC 名字会导致可移植性问题。
+解决方法：定义一个生成name的函数，根据不同的平台生成不同的名字。

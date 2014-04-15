@@ -1,0 +1,33 @@
+
+The three types of IPC,
+    System V message queues (Chapter 6),
+    System V semaphores (Chapter 11),and
+    System V shared memory (Chapter14)
+
+
+the three types of System V IPC are noted as using key_t values for their
+names. The header <sys/types.h> defines the key_t datatype, as an integer, nor-
+mally at least a 32-bit integer. These integer values are normally assigned by the ftok
+function.
+
+The function ftok converts an existing pathname and an integer identifier into a
+key_t value (called an IPC key).
+
+#include <sys/ipc.h>
+key_t ftok(const char *pathname, int id);
+    Returns: IPC key if OK, -1 on error
+This function takes information derived from the pathname and the low-order 8 bits of
+id, and combines them into an integer IPC key
+
+If the pathname does not exist, or is not accessible to the calling process, ftok
+returns -1. Be aware that the file whose pathname is used to generate the key must not
+be a file that is created and deleted by the server during its existence, since each time it
+is created, it can assume a new i-node number that can change the key returned by
+ftok to the next caller.
+
+ipc_perm structure
+The kernel maintains a structure of information for each IPC object, similar to the infor-
+mation it maintains for files. (<sys/ipc .h>)
+
+Creating and Opening IPC Channels
+p30

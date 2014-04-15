@@ -1,0 +1,58 @@
+Persistence of IPC Objects
+
+1.process-persistent
+A process-persistent IPC object remains in existence until the last process that
+holds the object open closes the object. Examples are pipes and FIFOs.
+
+2.kernel-persistent
+A kernel-persistent IPC object remains in existence until the kernel reboots or
+until the object is explicitly deleted. Examples are System V message queues,
+semaphores, and shared memory. Posix message queues, semaphores, and
+shared memory must be at least kernel-persistent, but may be file-
+system-persistent, depending on the implementation.
+
+3. A filesystem-persistent 
+A filesystem-persistent IPC object remains in existence until the object is explicitly
+deleted. The object retains its value even if the kernel reboots. Posix message
+queues, semaphores, and shared memory have this property, if they are imple-
+mented using mapped files (not a requirement).
+
+Type of IPC : Persistence
+Pipe         process
+FIFO         process
+Pcsix mutex  process
+Posix condition variable process
+Posix read-write lock process
+fcntl record locking process
+Posix message queue kernel
+Pcsix named semaphore kernel
+Pcsix memory-based semaphore process
+Posix shared memory kernel
+System V message queue kernel
+System V semaphore kernel
+System V shared memory kernel
+TCP socket process
+UDP socket process
+Unix domain socket process
+
+Note that no type of IPC has filesystem persistence, but we have mentioned that the
+three types of Posix IPC may, depending on the implementation. Obviously, writing
+data to a file provides filesystem persistence, but this is normally not used as a form of
+IPC. Most forms of IPC are not intended to survive a system reboot, because the pro-
+cesses do not survive the reboot. Requiring filesystem persistence would probably
+degrade the performance for a given form of IPC, and a common design goal for IPC is
+high performance.
+
+
+Name Spaces
+    When two unrelated processes use some type of IPC to exchange information between
+themselves; the IPC object must have a name or identifier of some form so that one
+process (often a server) can create the IPC object and other processes (often one or more
+clients) can specify that same IPC object.
+    The name space is important, because with all forms of IPC other than plain pipes,
+the name is how the client and server connect with each other to exchange messages.
+
+
+Effect of fork, exec, and exit on IPC Objects
+page10
+
