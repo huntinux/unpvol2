@@ -18,3 +18,20 @@ or a FIFO. Its single argument is the st_mode member of the stat structure and t
 macro evaluates to true (nonzero)or false (0). For a pipe, this structure is filled in by the
 fstat function. For a FIFO, this structure is filled in by the fstat , lstat , or stat
 functions.
+
+popen and pclose Functions
+standard 1 / 0 library provides the popen function that
+creates a pipe and initiates another process that either reads from the pipe or writes to
+the pipe.
+#include <stdio.h>
+FILE *popen (const char *command, const char *type);
+    Returns: file pointer if OK,NULL on error
+int pclose(FILE *stream);
+    Returns: termination status of shell or -1 on error
+
+
+FIFOS
+    Pipes have no names, and their biggest disadvantage is that they can be used only
+between processes that have a parent process in common.
+But unlike pipes, a FIFO has a pathname associated with it,
+allowing unrelated processes to access a single FIFO. FIFOs are also called named pipes.
