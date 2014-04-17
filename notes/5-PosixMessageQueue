@@ -1,0 +1,25 @@
+
+A message queue can be thought of as a linked list of messages. Threads with adequate
+permission can put messages onto the queue, and threads with adequate permission
+can remove messages from the queue. Each message is a record (recall our discussion of
+streams versus messages in Section 4.10), and each message is assigned a priority by the
+sender. No requirement exists that someone be waiting for a message to arrive on a
+queue before some process writes a message to that queue. This is in contrast to both
+pipes and FIFOs, for which it having a writer makes no sense unless a reader also exists.
+
+message queues have kernel persistence 
+
+Posix mq vs SystemV mq
+1.A read on a Posix message queue always returns the oldest message of the high-
+est priority, whereas a read on a System V message queue can return a message
+of any desired priority.
+2.Posix message queues allow the generation of a signal or the initiation of a
+thread when a message is placed onto an empty queue, whereas nothing similar
+is provided by System V message queues.
+
+Every message on a queue has the following attributes:
+1.an unsigned integer priority (Posix) or a long integer type (System V),
+2.the length of the data portion of the message (which can be O), and
+3.the data itself (if the length is greater than 0).
+
+
