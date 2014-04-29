@@ -23,3 +23,7 @@ Every message on a queue has the following attributes:
 3.the data itself (if the length is greater than 0).
 
 
+mq_notify()
+当有message的时候通知"别人" (异步通知)
+Posix uses the term async-signal-safe to describe the functions that may be called
+from a signal handler.(不是所有函数都能在信号处理函数中使用。)
