@@ -1,0 +1,55 @@
+Synchronization is normally needed to allow the sharing of data between threads 
+or processes. Mutexes and condition variables are the building blocks of 
+synchronization
+
+MUTEX (互斥锁)
+A mutex, which stands for mutual exclusion, is the most basic form of synchronization.
+A mutex is used to protect a critical region, to make certain that only one thread at a time
+a mutex is normally used to protect shared data that is being shared between multiple threads or
+between multiple processes. Mutex locks are cooperative locks 
+
+
+Producer-Consumer Problem
+One or more producers (threads or processes) are creating data items that are 
+then processed by one or more consumers (threads or processes). The data items 
+are passed between the producers and consumers using some type of IPC
+
+implicit and explicit synchronization(隐式、显式同步)
+1. 使用pipe、message queue的时候，kernel自动帮我们完成同步。(implicit)
+2. 但是使用share memory 的时候，同步需要我们自己完成。(explicit)
+
+Condition Variable: Waiting and Signaling (条件变量)
+A mutex is always associated with a condition variable. When we call
+pthread-cond-wait to wait for some condition to be true, we specify the address of
+the condition variable and the address of the associated mutex.
+
+pthread_cond_wait() does two things:
+1. unlock mutex
+2. put current thread to sleep until some other thread calls pthread_cond_signal
+for this condition variable.
+
+
+使用condition varibale的模型:
+In general, the code that signals a condition variable looks like the following:
+
+struct {
+	pthread_mutex_t mutex;
+	pthread_condR_t cond;
+	whatever variables maintain the condition
+) var = ( PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER, ... );
+pthread_mutex_lock(&var.mutex);
+set condition true
+pthread_cond_signal(&var.cond):
+pthread_mutex_unlock(&var.mutex);
+
+In our example, the variable that maintains the condition was an integer counter, and
+setting the condition was just incrementing the counter. We added the optimization that
+the signal occurred only when the counter went from 0 to 1.
+The code that tests the condition and goes to sleep waiting for the condition to be
+true normally looks like the following:
+
+pthread_mutex_lock(&var.mutex);
+while (conditionis false)  
+	pthread_cond_wait(&var.cond, &var.mutex);
+modify condition
+pthread_mutex_unlock(&var.mutex);
