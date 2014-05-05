@@ -69,7 +69,8 @@ reader(void *arg)
 	int		i;
 
 	for (i = 0; i < nloop; i++) {
-		pthread_rwlock_rdlock(&shared.rwlock);
+		//pthread_rwlock_rdlock(&shared.rwlock);
+		my_pthread_rwlock_rdlock(&shared.rwlock);
 
 		pthread_mutex_lock(&shared.rcountlock);
 		shared.nreaders++;	/* shared by all readers; must protect */
@@ -84,7 +85,8 @@ reader(void *arg)
 		shared.nreaders--;	/* shared by all readers; must protect */
 		pthread_mutex_unlock(&shared.rcountlock);
 
-		pthread_rwlock_unlock(&shared.rwlock);
+		//pthread_rwlock_unlock(&shared.rwlock);
+		my_pthread_rwlock_unlock(&shared.rwlock);
 	}
 	return(NULL);
 }
@@ -95,7 +97,8 @@ writer(void *arg)
 	int		i;
 
 	for (i = 0; i < nloop; i++) {
-		pthread_rwlock_wrlock(&shared.rwlock);
+		//pthread_rwlock_wrlock(&shared.rwlock);
+		my_pthread_rwlock_wrlock(&shared.rwlock);
 		shared.nwriters++;	/* only one writer; need not protect */
 
 		if (shared.nwriters > 1) {
@@ -108,7 +111,8 @@ writer(void *arg)
 		}
 
 		shared.nwriters--;	/* only one writer; need not protect */
-		pthread_rwlock_unlock(&shared.rwlock);
+		//pthread_rwlock_unlock(&shared.rwlock);
+		my_pthread_rwlock_unlock(&shared.rwlock);
 	}
 	return(NULL);
 }
