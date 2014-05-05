@@ -1,0 +1,23 @@
+读写锁
+
+A mutex lock blocks all other threads from entering what we call a critical region. This
+critical region usually involves accessing or updating one or more pieces of data that are
+shared between the threads. But sometimes, we can distinguish between reading a piece
+of data and modifying a piece of data.
+
+1. Any number of threads can hold a given read-write lock for reading as long as
+no thread holds the read-write lock for writing.
+2. A read-write lock can be allocated for writing only if no thread holds the
+read-write lock for reading or writing.
+
+In some applications, the data is read more often than the data is modified, and
+these applications can benefit from using read-write locks instead of mutex locks.
+
+函数
+    初始化一个读写锁pthread_rwlock_init
+    读锁定读写锁pthread_rwlock_rdlock
+    非阻塞读锁定pthread_rwlock_tryrdlock
+    写锁定读写锁pthread_rwlock_wrlock
+    非阻塞写锁定pthread_rwlock_trywrlock
+    解锁读写锁pthread_rwlock_unlock
+    释放读写锁pthread_rwlock_destroy 
