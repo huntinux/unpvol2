@@ -1,0 +1,19 @@
+
+The read-write locks described in the previous chapter are allocated in memory as vari-
+ables of datatype pthread_rwlock_t. These variables can be within a single process
+when the read-write locks are shared among the threads within that process (the
+default), or within shared memory when the read-write locks are shared among the
+processes that share that memory (and assuming that the PTHREAD_PROCESS_SHARED
+attribute is specified when the read-write lock is initialized).
+ 
+This chapter describes an extended type of read-write lock that can be used by
+related or unrelated processes to share the reading and writing of a file. The file that is
+being locked is referenced through its descriptor, and the function that performs the
+locking is fcntl. These types of locks are normally maintained within the kernel, and
+the owner of a lock is identified by its process ID. This means that these locks are for
+locking between different processes and not for locking between the different threads
+within one process.
+
+
+The Posix interface for record locking is the fcntl function
+fcntl - manipulate file descriptor . see man fcntl
