@@ -1,0 +1,48 @@
+
+A semaphore is a primitive used to provide synchronization between various processes
+or between the various threads in a given process. We look at three types of
+semaphores in this text:  
+
+1. Posix named semaphores are identified by Posix IPC names (Section 2.2) and can
+be used to synchronize processes or threads.
+
+2. Posix memory-based semaphores are stored in shared memory and can be used
+to synchronize processes or threads.
+
+3. System V semaphores (Chapter 11) are maintained in the kernel and can be used
+to synchronize processes or threads.
+
+信号量与互斥锁，条件变量的区别
+Three differences among semaphores and mutexes and condition variables:
+1. A mutex must always be unlocked by the thread that locked the mutex, whereas
+a semaphore post need not be performed by the same thread that did the
+semaphore wait. This is what we just showed in our example.
+2. A mutex is either locked or unlocked (a binary state, similar to a binary
+semaphore).
+3. Since a semaphore has state associated with it (its count), a semaphore post is
+always remembered. When a condition variable is signaled, if no thread is wait-
+ing for this condition variable, the signal is lost. As an example of this feature,
+consider Figure 10.5 but assume that the first time through the producer loop,
+the consumer has not yet called sen_wait. The producer can still put the data
+item into the buffer, call sem_post on the get semaphore (incrementing its
+value from 0 to 1), and then block in its call to sen_wait on the put
+semaphore. Some time later, the consumer can enter its for loop and call
+sen_wait on the get variable, which will decrement the semaphore's value
+from 1 to 0, and the consumer then processes the buffer.
+
+for posix named semaphore
+sem_open
+sem_wait
+sem_post
+sem_unlink
+...
+
+for posix memory based semaphore
+sem_init
+sem_destory
+
+
+// 先取得资源信号量在去取得互斥信号(mutex or 2值信号量)
+// 如果反过来，会导致死锁
+// 比如A 获得了互斥信号量m，但是获取资源信号量n失败了
+// B 获取互斥信号量m会失败，所以不能对资源信号量n进行释放。导致死锁。
