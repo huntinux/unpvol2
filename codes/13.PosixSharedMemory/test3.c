@@ -46,3 +46,7 @@ main(int argc, char **argv)
 
 	exit(0);
 }
+
+// The pointers ptr1 in the parent and child both point to the same
+// shared memory segment, even though the value of each pointer is different in each pro-
+// cess.
