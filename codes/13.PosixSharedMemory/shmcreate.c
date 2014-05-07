@@ -35,3 +35,5 @@ main(int argc, char **argv)
 
 	exit(0);
 }
+// ./shmcreate /tmpshm
+// /tmpshm 的路径为 /dev/shm/  详见 man shm_open
