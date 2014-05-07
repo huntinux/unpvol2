@@ -1,0 +1,22 @@
+
+Posix.1 provides two ways to share memory between unrelated processes.
+
+1.  Memory-mapped files: a file is opened by open, and the resulting descriptor is
+mapped into the address space of the process by map . We described this tech-
+nique in Chapter 12 and showed its use when sharing memory between a par-
+ent and child. Memory-mapped files can also be shared between unrelated
+processes.
+2.  Shared memory objects: the function shm_open opens a Posix.1 IPC name (per-
+haps a pathname in the filesystem), returning a descriptor that is then mapped
+into the address space of the process by map . We describe this technique in
+this chapter.
+
+
+The two-step process involved with Posix shared memory requires
+1. calling shm_open , specifying a name argument, to either create a new shared
+memory object or to open an existing shared memory object, followed by
+2. calling map to map the shared memory into the address space of the calling
+process.
+
+The POSIX shared memory object implementation on Linux 2.4 makes use of a 
+dedicated file system, which is normally mounted under /dev/shm.

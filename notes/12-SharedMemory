@@ -1,0 +1,26 @@
+
+Shared memory is the fastest form of IPC available. Once the memory is mapped into
+the address space of the processes that are sharing the memory region, no kernel
+involvement occurs in passing data between the processes. What is normally required,
+however, is some form of synchronization between the processes that are storing and
+fetching information to and from the shared memory region. In Part 3, we discussed
+various forms of synchronization: mutexes, condition variables, read-write locks, record
+locks, and semaphores.
+
+
+if we modify a location in memory that is memory-mapped to a file, then at some 
+time later the kernel will update the file accordingly. But sometimes, we want 
+to make certain that the file on disk corresponds to what is in the memory-mapped 
+region, and we call msync to perform this synchronization.
+
+
+Not all files can be memory mapped. Trying to map a descriptor that refers to a 
+terminal or a socket, for example, generates an error return from map .These 
+types of descriptors must be accessed using read and write (or variants thereof)
+
+
+Another use of map is to provide shared memory between unrelated processes. In
+this case, the actual contents of the file become the initial contents of the memory that is
+shared, and any changes made by the processes to this shared memory are then copied
+back to the file (providing filesystem persistence). This assumes that MAP_SHARED is
+specified, which is required to share the memory between processes.
