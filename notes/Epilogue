@@ -1,0 +1,148 @@
+Epilogue
+
+This text has described in detail four different techniques for interprocess communication (IPC):
+
+1. message passing (pipes, FIFOs, Posix and System V message queues),
+
+2. synchronization (mutexes, condition variables, read-write locks, file and record
+locks, Posix and System V semaphores),
+
+3. shared memory (anonymous, named Posix, named System V), and
+
+4. procedure calls (Solaris doors, Sun RPC).
+
+Message passing and procedure calls are often used by themselves, that is, they nor-
+mally provide their own synchronization. Shared memory, on the other hand, usually
+requires some form of application-provided synchronization to work correctly. The syn-
+chronization techniques are sometimes used by themselves; that is, without the other
+forms of IPC.
+After covering 16 chapters of details, the obvious question is: which form of IPC
+should be used to solve some particular problem? Unfortunately, there is no silver bul-
+let regarding IPC. The vast number of different types of IPC provided by Unix indicates
+that no one solution solves all (or even most) problems. All that you can do is become
+familiar with the facilities provided by each form of IPC and then compare the features
+with the needs of your specific application.
+
+We first list four items that must be considered, in case they are important for your
+application.
+
+1. Networked versus nonnetworked. We assume that this decision has already been
+made and that IPC is being used between processes or threads on a single host.
+If the application might be distributed across multiple hosts, consider using
+sockets instead of IPC, to simplify the later move to a networked application.
+
+2. Portability (recall Figure 1.5). Almost all Unix systems support Posix pipes,
+Posix FIFOs, and Posix record locking. As of 1998, most Unix systems support
+System V IPC (messages, semaphores, and shared memory), whereas only a few
+support Posix IPC (messages, semaphores, and shared memory). More imple-
+mentations of Posix IPC should appear, but it is (unfortunately)an option with
+Unix 98. Many Unix systems support Posix threads (which include mutexes
+and condition variables) or should support them in the near future. Some sys-
+tems that support Posix threads do not support the process-shared attributes of
+mutexes and condition variables. The read-write locks required by Unix 98
+should be adopted by Posix, and many versions of Unix already support some
+type of read-write lock. Memory-mapped I/O is widespread, and most Unix
+systems also provide anonymous memory mapping (either /dev/zero or
+MAP-ANON). Sun RPC should be available on almost all Unix systems, whereas
+doors are a Solaris-only feature (for now).
+
+3. Performance. If this is a critical item in your design, run the programs developed
+in Appendix A on your own systems. Better yet, modify these programs to sim-
+ulate the environment of your particular application and measure their perfor-
+mance in this environment.
+
+4. Realtime scheduling. If you need this feature and your system supports the Posix
+realtime scheduling option, consider the Posix functions for message passing
+and synchronization (message queues, semaphores, mutexes, and condition
+variables). For example, when someone posts to a Posix semaphore on which
+multiple threads are blocked, the thread that is unblocked is chosen in a manner
+appropriate to the scheduling policies and parameters of the blocked threads.
+System V semaphores, on the other hand, make no such guarantee.
+
+To help understand some of the features and limitations of the various types o IPC,
+we summarize some of the major differences:
+
+Pipes and FIFOs are byte streams with no message boundaries. Posix messages
+and System V messages have record boundaries that are maintained from the
+sender to the receiver. (With regard to the Internet protocols described in
+UNPv1, TCP is a byte stream, but UDP provides messages with record bound-
+aries.)
+
+Posix message queues can send a signal to a process or initiate a new thread
+when a message is placed onto an empty queue. No similar form of notification
+is provided for System V message queues. Neither type of message queue can
+be used directly with either select or poll (Chapter 6 of UNPvl), although
+we provided workarounds in Figure 5.14 and Section 6.9.
+The bytes of data in a pipe or FIFO are first-in, first-out. Posix messages and
+System V messages have a priority that is assigned by the sender. When reading
+a Posix message queue, the highest priority message is always returned first.
+
+When reading a System V message queue, the reader can ask for any priority
+message that it wants.
+
+When a message is placed onto a Posix or System V message queue, or written
+to a pipe or FIFO, one copy is delivered to exactly one thread. No peeking capa-
+bility exists (similar to the sockets MSG-PEEK flag; Section 13.7 of UNPvl), and
+these messages cannot be broadcast or multicast to multiple recipients (as is pos-
+sible with sockets and XTI using the UDP protocol; Chapters 18 and 19 of
+UNPv1).
+
+Mutexes, condition variables, and read-write locks are all unnamed: they are
+memory-based. They can be shared easily between the different threads within
+a single process. They can be shared between different processes only if they are
+stored in memory that is shared between the different processes. Posix
+semaphores, on the other hand, come in two flavors: named and memory-based.
+Named semaphores can always be shared between different processes (since
+they are identified by Posix IPC names), and memory-based semaphores can be
+shared between different processes if the semaphore is stored in memory that is
+shared between the different processes. System V semaphores are also named,
+using the key-t datatype, which is often obtained from the pathname of a file.
+These semaphores can be shared easily between different processes.
+
+fcntl record locks are automatically released by the kernel if the process hold-
+ing the lock terminates without releasing the lock. System V semaphores have
+this feature as an option. Mutexes, condition variables, read-write locks, and
+Posix semaphores do not have this feature.
+
+Each fcntl lock is associated with some range of bytes (what we called a
+"record") in the file referenced by the descriptor. Read-write locks are not asso-
+ciated with any type of record.
+
+Posix shared memory and System V shared memory both have kernel persis-
+tence. They remain in existence until explicitly deleted, even if they are not cur-
+rently being used by some process.
+
+The size of a Posix shared memory object can be extended while the object is
+being used. The size of a System V shared memory segment is fixed when it is
+created.
+
+The kernel limits for the three types of System V IPC often require tuning by the
+system administrator, because their default values are usually inadequate for
+real-world applications (Section 3.8). The kernel limits for the three types of
+Posix IPC usually require no tuning at all.
+
+Information about System V IPC objects (current size, owner ID, last-
+modification time, etc.) is available with a command of IPC-STAT with the three
+XXXctl functions, and with the ipcs command. No standard way exists to
+obtain this information about Posix IPC objects. If the implementation uses files
+in the filesystem for these objects, then the information is available with the
+stat function or with the Is command, if we know the mapping from the Posix
+
+IPC name to the pathname. But if the implementation does not use files, this
+information may not be available.
+
+Of the various synchronization techniques-mutexes, condition variables,
+read-write locks, record locks, and Posix and System V semaphores-the only
+functions that can be called from a signal handler (Figure 5.10) are semsost
+and fcntl.
+
+Of the various message passing techniques-pipes, FIFOs, and Posix and
+System V message queues-the only functions that can be called from a signal
+handler are read and write (for pipes and FIFOs).
+
+Of all the message passing techniques, only doors accurately provide the client's
+identity to the server (Section 15.5). In Section 5.4, we mentioned two other
+types of message passing that also identify the client: BSD/OS provides this
+identity when a Unix domain socket is used (Section 14.8 of UNPvl), and SVR4
+passes the sender's identity across a pipe when a descriptor is passed across the
+pipe (Section 15.3.1 of APUE).
